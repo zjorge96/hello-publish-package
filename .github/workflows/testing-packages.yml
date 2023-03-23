@@ -16,6 +16,8 @@ jobs:
       - name: Publish Docker package
         uses: docker/build-push-action@v2
         with:
+          context: .
+          file: ./sample-packages/docker/Dockerfile
           push: true
           tags: ${{ github.repository_owner }}/docker-package:latest
   
@@ -26,6 +28,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
+          context: ./sample-packages/npm
       - name: Publish NPM package
         run: |
           npm ci
@@ -38,6 +41,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
+          context: ./sample-packages/ruby
       - name: Publish Ruby package
         run: |
           gem build ruby-package.gemspec
