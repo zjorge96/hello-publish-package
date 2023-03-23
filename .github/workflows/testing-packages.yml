@@ -31,7 +31,7 @@ jobs:
       - name: Publish NPM package
         run: |
           cd ./sample-packages/npm
-          npm ci
+          npm i
           npm publish
 
   publish-ruby:
@@ -43,6 +43,6 @@ jobs:
           ruby-version: 2.7
       - name: Publish Ruby package
         run: |
-          cd ./sample-packages/
+          cd ./sample-packages/ruby
           gem build ruby-package.gemspec
           gem push *.gem
