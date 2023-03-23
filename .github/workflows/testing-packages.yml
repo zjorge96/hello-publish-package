@@ -28,9 +28,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
-          context: ./sample-packages/npm
       - name: Publish NPM package
         run: |
+          cd ./sample-packages/npm
           npm ci
           npm publish
 
@@ -41,8 +41,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-          context: ./sample-packages/ruby
       - name: Publish Ruby package
         run: |
+          cd ./sample-packages/
           gem build ruby-package.gemspec
           gem push *.gem
