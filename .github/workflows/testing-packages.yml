@@ -1,7 +1,5 @@
 name: Test Package
 
-# Publish the docker, npm and ruby packages found in the repository
-
 on:
   push:
     branches:
@@ -9,6 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  login-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
   login-ghcr:
     runs-on: ubuntu-latest
     steps:
@@ -28,33 +36,32 @@ jobs:
       - name: Publish Docker package
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ./sample-packages/docker/Dockerfile
+          context: ./sample-packages/docker/
           push: true
           tags: ${{ github.repository_owner }}/docker-package:latest
   
-  # publish-npm:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '12'
-  #     - name: Publish NPM package
-  #       run: |
-  #         cd ./sample-packages/npm
-  #         npm i
-  #         npm publish
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Publish NPM package
+        run: |
+          cd ./sample-packages/npm
+          npm i
+          npm publish
 
-  # publish-ruby:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: 2.7
-  #     - name: Publish Ruby package
-  #       run: |
-  #         cd ./sample-packages/ruby
-  #         gem build ruby-package.gemspec
-  #         gem push *.gem
+  publish-ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Publish Ruby package
+        run: |
+          cd ./sample-packages/ruby
+          gem build ruby-package.gemspec
+          gem push *.gem
