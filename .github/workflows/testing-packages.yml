@@ -1,0 +1,44 @@
+name: Test Package
+
+# Publish the docker, npm and ruby packages found in the repository
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish Docker package
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ github.repository_owner }}/docker-package:latest
+  
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Publish NPM package
+        run: |
+          npm ci
+          npm publish
+
+  publish-ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Publish Ruby package
+        run: |
+          gem build ruby-package.gemspec
+          gem push *.gem
